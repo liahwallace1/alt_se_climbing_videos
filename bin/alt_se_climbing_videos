@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+
+require "bundler/setup"
+require "alt_se_climbing_videos"
+
+AltSeClimbingVideos::CLI.new.call
