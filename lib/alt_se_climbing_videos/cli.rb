@@ -30,7 +30,8 @@ class AltSeClimbingVideos::CLI
     self.location_input = gets.strip
 
     if ["1", "2", "3", "4", "5", "6"].include?(@location_input)
-      AltSeClimbingVideos::Scraper.new.make_videos(AltSeClimbingVideos::SEARCH_LINKS[@location_input][:link], AltSeClimbingVideos::SEARCH_LINKS[@location_input][:location])
+      self.make_videos(AltSeClimbingVideos::SEARCH_LINKS[@location_input][:link], AltSeClimbingVideos::SEARCH_LINKS[@location_input][:location])
+      self.add_video_attributes
 
     elsif @location_input =="exit"
       goodbye
@@ -41,13 +42,13 @@ class AltSeClimbingVideos::CLI
     end
   end
 
-  def make_videos
-    video_array = AltSeClimbingVideos::Scraper.scrape_youtube_list(AltSeClimbingVideos::SEARCH_LINKS[@location_input][:youtube])
+  def make_videos(link, location)
+    video_array = AltSeClimbingVideos::Scraper.scrape_youtube_list(link, location)
     AltSeClimbingVideos::Video.create_from_collection(video_array)
   end
 
   def add_attributes_to_videos
-    Video.all.each do |video|
+    AltSeClimbingVideos::Video.all.each do |video|
         attributes = AltSeClimbingVideos::Scraper.scrape_youtube_video(video.video_url)
         video.add_video_attributes(attributes)
       end
