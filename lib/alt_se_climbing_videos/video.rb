@@ -10,7 +10,7 @@ class AltSeClimbingVideos::Video
   end
 
   def self.create_from_collection(video_array)
-    video_array.each{|video_hash| Video.new(video_hash)}
+    video_array.each{|video_hash| AltSeClimbingVideos::Video.new(video_hash)}
   end
 
   def add_video_attributes(attributes_hash)

@@ -1,20 +1,17 @@
 class AltSeClimbingVideos::Scraper
 
-  def get_page(link)
-    Nokogiri::HTML(open(link))
-  end
-
 def self.scrape_youtube_list(link, location)
+    doc = Nokogiri::HTML(open(link))
 
     videos = []
 
-    get_page(link).css("div.yt-lockup-content").each do |video|
+    doc.css("div.yt-lockup-content").each do |video|
       videos << {
-      :location = location,
-      :name = video.search("a.yt-uix-tile-link").attr("title").text,
-      :upload_user = doc.search("div.yt-lockup-byline").text,
-      :duration = doc.search("span.accessible-description").text.gsub(" - Duration: ", "").gsub(".", ""),
-      :video_url = "https://www.youtube.com" +  doc.search("a.yt-uix-tile-link").attr("href").value}
+      :location => location,
+      :name => video.search("a.yt-uix-tile-link").attr("title").text,
+      :upload_user => video.search("div.yt-lockup-byline").first.text,
+      :duration => video.search("span.accessible-description").text.gsub(" - Duration: ", "").gsub(".", ""),
+      :video_url => "https://www.youtube.com" +  video.search("a.yt-uix-tile-link").attr("href").value}
     end
     videos
   end
@@ -24,8 +21,8 @@ def self.scrape_youtube_list(link, location)
     video_doc.search("br").each {|node| node.replace("\n")}
 
     video_info = {
-      :description = video_doc.search("#eow-description").text,
-      :upload_date = video_doc.search("#watch-uploader-info").text.gsub("Published on ", "").strip
+      :description => video_doc.search("#eow-description").text,
+      :upload_date => video_doc.search("#watch-uploader-info").text.gsub("Published on ", "").strip
       }
 
     video_info
