@@ -1,5 +1,32 @@
 class AltSeClimbingVideos::CLI
 
+  SEARCH_LINKS = [
+    {
+      location: "Boone, NC",
+      link: "https://www.youtube.com/results?sp=CAI%253D&q=Boone+NC+bouldering"
+    },
+    {
+      location: "Grayson Highlands, VA",
+      link: "https://www.youtube.com/results?q=Grayson+Highlands+bouldering&sp=CAI%253D"
+    },
+    {
+      location: "Horse Pens 40, AL",
+      link: "https://www.youtube.com/results?q=horse+pens+40+bouldering&sp=CAI%253D"
+    },
+    {
+      location: "Rocktown, GA",
+      link: "https://www.youtube.com/results?q=Rocktown+bouldering&sp=CAI%253D"
+    },
+    {
+      location: "Rumbling Bald, NC",
+      link: "https://www.youtube.com/results?q=rumbling+bald+bouldering&sp=CAI%253D"
+    },
+    {
+      location: "Stone Fort (LRC), TN",
+      link: "https://www.youtube.com/results?sp=CAI%253D&q=Stone+Fort+LRC+bouldering"
+    }
+  ]
+
   attr_accessor :location_input
 
   def call
@@ -21,16 +48,16 @@ class AltSeClimbingVideos::CLI
   def location_search
     puts "Please enter the number of the bouldering area you would like to search:".colorize(:cyan)
     puts "You can enter:".colorize(:cyan)
-    puts "1. Boone, NC"
-    puts "2. Grayson Highlands, VA"
-    puts "3. Horse Pens 40, AL"
-    puts "4. Rocktown, GA"
-    puts "5. Rumbling Bald, NC"
-    puts "6. Stone Fort (LRC), TN"
+    SEARCH_LINKS.each.with_index(1) do |location, index|
+      puts "#{index}. #{location[:location]}"
+    end
+
     self.location_input = gets.strip
 
-    if ["1", "2", "3", "4", "5", "6"].include?(@location_input)
-      self.make_videos(AltSeClimbingVideos::SEARCH_LINKS[@location_input][:link], AltSeClimbingVideos::SEARCH_LINKS[@location_input][:location])
+    location = SEARCH_LINKS[@location_input.to_i - 1]
+
+    if location
+      self.make_videos(location[:link], location[:location])
       self.add_attributes_to_videos
 
     elsif @location_input =="exit"
@@ -55,10 +82,10 @@ class AltSeClimbingVideos::CLI
   end
 
   def print_videos
-    puts "---Latest 20 videos from #{AltSeClimbingVideos::SEARCH_LINKS[@location_input][:location]}---".colorize(:light_blue)
+    puts "---Latest 20 videos from #{SEARCH_LINKS[@location_input.to_i - 1][:location]}---".colorize(:light_blue)
     puts ""
  AltSeClimbingVideos::Video.all.each.with_index(1) do |video, i|
-      if video.location == AltSeClimbingVideos::SEARCH_LINKS[@location_input][:location]
+      if video.location == SEARCH_LINKS[@location_input.to_i - 1][:location]
       puts "#{i}. "+"#{video.name}".colorize(:light_blue)+" - #{video.upload_user} - #{video.upload_date}"
       end
     end
